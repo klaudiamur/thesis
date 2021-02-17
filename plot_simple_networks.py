@@ -78,6 +78,7 @@ def create_latex_matrix(matrix):
     matrix_latex = matrix_latex + ' \end{pmatrix}'
     return matrix_latex
 
+
 def draw_network(G):
     widths = nx.get_edge_attributes(G, 'weight')
     
@@ -91,14 +92,65 @@ def draw_network(G):
     plt.show()
 
     
-n = 8
-#matrix, G = create_random_network(n, directed = False, weighted = True)
-matrix, G, b = create_bridge(n)
-draw_network(G)
+n = 6
+#matrix, G = create_random_network(n, directed = False, weighted = False)
+#matrix, G, b = create_bridge(n)
+#draw_network(G)
 
-matrix_latex = create_latex_matrix(matrix)
+#G = nx.gnm_random_graph(n, n*2)
+
+## make a network with a node that has high eigenvector centrality but low degree centrality
+
+
+G1 = nx.barabasi_albert_graph(n, 2)
+G2 = nx.barabasi_albert_graph(n, 2)
+
+G2 = nx.relabel_nodes(G2, lambda x: x+n)
+
+
+dg1 = {n:d for n, d in G1.degree()}
+dg2 = {n:d for n, d in G2.degree()}
+
+hub1 = max(dg1, key=dg1.get)
+hub2 = max(dg2, key=dg2.get)
+node1 = min(dg1, key=dg1.get)
+#node1 = np.random.randint(2*n)
+
+
+G = nx.compose(G1, G2)
+G.add_edge(node1, hub1)
+G.add_edge(node1, hub2)
+G.add_edge(np.random.randint(n), np.random.randint(n, 2*n))
+G.add_edge(np.random.randint(n), np.random.randint(n, 2*n))
+#G.remove_edge(hub1, hub2)
+
+#matrix_latex = create_latex_matrix(matrix)
 
 ## plot this shit with betweenness centrality and so on as color codes!!!
+#G = nx.barabasi_albert_graph(n, 3)
+#bc = nx.betweensess_centrality(G)
+dg = {n:d for n, d in G.degree()}
+#cc = nx.closeness_centrality(G)
+ec = nx.eigenvector_centrality(G)
+node_labels = {i+1 for i in range(len(G.nodes()))}
+
+plt.figure(frameon=False, dpi=500, figsize=(6,4))
+pos = nx.drawing.nx_agraph.graphviz_layout(G, prog = 'neato')
+nx.draw_networkx_nodes(G, pos, 
+                       node_color=list(ec.values()), 
+                       #vmin = -0.1,
+                       #vmax = 0.8,
+                       cmap=plt.cm.Purples, node_size = 250
+                       )
+# nx.draw_networkx_edges(G, pos, edgelist = widths.keys(),
+ #                       width=list(widths.values()))
+nx.draw_networkx_edges(G, pos, width = 0.5, alpha = 0.5)
+nx.draw_networkx_labels(G, pos,  font_color='white')
+plt.show()
+
+
+
+
 
     
 
