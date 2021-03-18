@@ -119,6 +119,7 @@ node1 = min(dg1, key=dg1.get)
 
 
 G4 = nx.compose(G1, G2)
+G = nx.compose(G4, G3)
 G.add_edge(node1, hub1)
 G.add_edge(node1, hub2)
 #G.add_edge(node1)
