@@ -104,9 +104,10 @@ n = 6
 
 G1 = nx.barabasi_albert_graph(n, 2)
 G2 = nx.barabasi_albert_graph(n, 2)
+G3 = nx.barabasi_albert_graph(n, 2)
 
 G2 = nx.relabel_nodes(G2, lambda x: x+n)
-
+G3 = nx.relabel_nodes(G3, lambda x: x+2*n)
 
 dg1 = {n:d for n, d in G1.degree()}
 dg2 = {n:d for n, d in G2.degree()}
@@ -117,11 +118,12 @@ node1 = min(dg1, key=dg1.get)
 #node1 = np.random.randint(2*n)
 
 
-G = nx.compose(G1, G2)
+G4 = nx.compose(G1, G2)
 G.add_edge(node1, hub1)
 G.add_edge(node1, hub2)
-G.add_edge(np.random.randint(n), np.random.randint(n, 2*n))
-G.add_edge(np.random.randint(n), np.random.randint(n, 2*n))
+#G.add_edge(node1)
+G.add_edge(np.random.randint(n), np.random.randint(2*n, 3*n))
+G.add_edge(np.random.randint(n, 2*n), np.random.randint(2*n, 3*n))
 #G.remove_edge(hub1, hub2)
 
 #matrix_latex = create_latex_matrix(matrix)
@@ -131,21 +133,23 @@ G.add_edge(np.random.randint(n), np.random.randint(n, 2*n))
 #bc = nx.betweensess_centrality(G)
 dg = {n:d for n, d in G.degree()}
 #cc = nx.closeness_centrality(G)
-ec = nx.eigenvector_centrality(G)
+#ec = nx.eigenvector_centrality(G)
 node_labels = {i+1 for i in range(len(G.nodes()))}
+node_colors = [0.3 if i  < n else 0.6 if i < 2*n else 0.9 for i in range(3*n)]
 
 plt.figure(frameon=False, dpi=500, figsize=(6,4))
 pos = nx.drawing.nx_agraph.graphviz_layout(G, prog = 'neato')
 nx.draw_networkx_nodes(G, pos, 
-                       node_color=list(ec.values()), 
-                       #vmin = -0.1,
-                       #vmax = 0.8,
+                       #node_color=list(ec.values()), 
+                       node_color = node_colors,
+                       vmin = 0,
+                       vmax = 1,
                        cmap=plt.cm.Purples, node_size = 250
                        )
 # nx.draw_networkx_edges(G, pos, edgelist = widths.keys(),
  #                       width=list(widths.values()))
 nx.draw_networkx_edges(G, pos, width = 0.5, alpha = 0.5)
-nx.draw_networkx_labels(G, pos,  font_color='white')
+#nx.draw_networkx_labels(G, pos,  font_color='white')
 plt.show()
 
 
