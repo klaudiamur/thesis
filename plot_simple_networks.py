@@ -90,9 +90,35 @@ def draw_network(G):
     nx.draw_networkx_edges(G, pos, width = 0.5)
     nx.draw_networkx_labels(G, pos)
     plt.show()
+    
+    
+    
+    
+matrix, G, b = create_bridge(10)    
+
+
+
+G = nx.barabasi_albert_graph(30, 2)
+G = nx.powerlaw_cluster_graph(20, 3, 0.8)
+draw_network(G)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     
-n = 6
+n = 8
 #matrix, G = create_random_network(n, directed = False, weighted = False)
 #matrix, G, b = create_bridge(n)
 #draw_network(G)
@@ -123,7 +149,9 @@ G = nx.compose(G4, G3)
 G.add_edge(node1, hub1)
 G.add_edge(node1, hub2)
 #G.add_edge(node1)
+G.add_edge(np.random.randint(n), np.random.randint(n, 2*n))
 G.add_edge(np.random.randint(n), np.random.randint(2*n, 3*n))
+G.add_edge(np.random.randint(n, 2*n), np.random.randint(2*n, 3*n))
 G.add_edge(np.random.randint(n, 2*n), np.random.randint(2*n, 3*n))
 #G.remove_edge(hub1, hub2)
 
@@ -133,23 +161,36 @@ G.add_edge(np.random.randint(n, 2*n), np.random.randint(2*n, 3*n))
 #G = nx.barabasi_albert_graph(n, 3)
 #bc = nx.betweensess_centrality(G)
 dg = {n:d for n, d in G.degree()}
-#cc = nx.closeness_centrality(G)
-#ec = nx.eigenvector_centrality(G)
+cc = nx.closeness_centrality(G)
+ec = nx.eigenvector_centrality(G)
 node_labels = {i+1 for i in range(len(G.nodes()))}
 node_colors = [0.3 if i  < n else 0.6 if i < 2*n else 0.9 for i in range(3*n)]
 
-plt.figure(frameon=False, dpi=500, figsize=(6,4))
 pos = nx.drawing.nx_agraph.graphviz_layout(G, prog = 'neato')
+plt.figure(frameon=False, dpi=1200, figsize=(6,4))
+
+
+
+#pos[3] = (300, 360)
+color_blueish = '#56a891' #'#78c2ad'
+
+color_blueish_lighter = '#bad6ce'
+color_whitish = '#f8f9fa'
+
+#node_color = [color_blueish if i in [3, 6, 10, 14] else color_blueish_lighter for i in range(3*n)]
+#cmap = plt.Colormap(78c2ad)
 nx.draw_networkx_nodes(G, pos, 
-                       #node_color=list(ec.values()), 
-                       node_color = node_colors,
+                       node_color=list(ec.values()), 
+                       #node_color = node_colors,
                        vmin = 0,
                        vmax = 1,
-                       cmap=plt.cm.Purples, node_size = 250
+                       cmap='Purples', 
+                       node_size = 250
                        )
 # nx.draw_networkx_edges(G, pos, edgelist = widths.keys(),
  #                       width=list(widths.values()))
-nx.draw_networkx_edges(G, pos, width = 0.5, alpha = 0.5)
+nx.draw_networkx_edges(G, pos, width = 0.6, alpha = 0.25, edgelist=None)
+#nx.draw_networkx_edges(G, pos, width = 0.6, alpha = 1, edgelist=[(3,6),  (6,10), (14, 10), (14, 3)])
 #nx.draw_networkx_labels(G, pos,  font_color='white')
 plt.show()
 
